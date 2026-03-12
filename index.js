@@ -1,91 +1,97 @@
-const input = require('readline-sync')
+const input = require('readline-sync');
 
-let vidaPlayer = 150;
-let vidaGoblin = 100;
+let filaAtendimento = [];
 
-const inventoryPlayer = {
-    objeto: "Espada de Ferro", dano: "10", integridade: "100",
-    objeto1: "Poção de Vida", regeneration: "20", quantidade: "2"
-}
+const user = "554822-SP"
+const password = "M123456@a"
+const name = "VITOR HUGO ALBINO"
+const role = "MÉDICO ESPECIALISTA"
+const defaultRole = "MÉDICO"
 
-const questionStart = input.question("Voce deseja iniciar?" )
-const questionName = input.question("Digite seu nome/usuario: ")
+let questionRole = input.question("Em qual ambito você deseja abrir o dashboard? ")
 
-if(questionStart == "Sim") {
-    console.log("\nIniciando...")
-
-    gameStarted();
+if (questionRole === defaultRole) {
+    let questionUser = input.question("\nDigite seu usuário: ");
+    if (questionUser === user) {
+        let questionPassword = input.question("\nDigite sua senha: ");
+        if (questionPassword === password) {
+            abrirDashboard();
+        } else {
+            console.log("\nSenha Incorreta.")
+        }
+    } else {
+        console.log("\nUsuário incorreto e/ou usuário não cadastrado.")
+    }
 } else {
-    console.log("OK! Até Breve.")
+    console.log("\n Desculpe! Este acesso ainda é apenas para médicos.")
 }
 
-function gameStarted() {
-    console.log(`\nBem vindo, ${questionName} ao nosso game.`)
+function abrirDashboard() {
+    console.log("\n============SISTEMA DE ATENDIMENTO================")
 
-    if(vidaPlayer && vidaGoblin <= 0) {
-        return
-    }
+    let rodando = true;
 
-    let option = input.question("\nEscolha as opcoes abaixo: \n1 - Atacar \n2 - Defender \n3 - Ver inventário \n4 - Ver métricas do jogo \n5 - Sair")
+    while (rodando) {
 
-    switch(option) {
-        case "1":
-            menuAtaque();
-            break;
+        console.log(`Bem vindo, ${name}! Você está logado como: ${role}.`)
 
-        case "2":
-            defenderṔlayer();
-            break;
+        let option = input.question("\nDigite a opcao que voce deseja: \n1 - Adicionar na fila de atendimento \n2 - Remover da fila de atendimento \n3 - Chamar paciente \n4 - Sair \nDigite aqui: ")
 
-        case "3":
-            abrirInventario();
-            break;
-
-        case "4":
-            abrirMetricas();
-            break;
-
-        case "5":
-            console.log("Saindo...")
-            break;
-
-        default:
-            console.log("Opcao inválida!")
-            break;
-    }
-
-    function menuAtaque() {
-        let arrayArmas = input.question(`nQual arma você deseja usar? Arma 1: ${inventoryPlayer.objeto}, dano: ${inventoryPlayer.dano}, integridade: ${inventoryPlayer.integridade} `)
-
-        switch(arrayArmas) {
+        switch (option) {
             case "1":
-                atacarGoblin();
+                adicionarAFila();
+                break;
+
+            case "2":
+                removerDaFila();
+                break;
+
+            case "3":
+                chamarPaciente();
+                break;
+
+            case "4":
+                console.log("Saindo...")
                 break;
 
             default:
                 console.log("Opcao Invalida!")
-                gameStarted();
-                break;
+                return;
         }
     }
 
-    function atacarGoblin() {
-        let danoRealizado = Math.floor(Math.random() * 11) + parseInt(inventoryPlayer.dano);
-        vidaGoblin -= danoRealizado;
+    function adicionarAFila() {
 
-        console.log(`\nVoce atacou o Goblin com sucesso!`)
-        console.log(`\nVida do Goblin: ${vidaGoblin}.`)
-
-        atacarPlayer();
+        let questionPacient = input.question("Digite o nome do paciente: ")
+        if (filaAtendimento.length >= 5) {
+            console.log("Aguarde, há muitas pessoas esperando.");
+        } else {
+            console.log(`O paciente ${questionPacient} foi adicionado com sucesso!`)
+            filaAtendimento.push(questionPacient);
+        }
     }
 
-    function atacarPlayer() {
-        let danoRealizadoGoblin = Math.floor(Math.random() * 11)
-        vidaPlayer -= danoRealizadoGoblin
+    function removerDaFila() {
+        console.log(filaAtendimento);
+        let questionRemove = input.question("Digite o número do paciente que você deseja remover: ");
 
-        console.log(`\n O Goblin atacou voce!`)
-        console.log(`Vida restante: ${vidaPlayer}`);
+        switch (questionRemove) {
+            case questionRemove:
+                filaAtendimento.splice(0, questionRemove);
+                console.log(`O paciente ${questionRemove} foi removido com sucesso!`)
+                break;
 
-        gameStarted();
+            default:
+                console.log("O paciente não existe ou já foi retirado!");
+                break;
+
+        }
+    }
+
+    function chamarPaciente() {
+        console.log("Paciente entrou em atendimento!")
+        filaAtendimento.splice(0, 1);
+
+        console.log(`Pacientes esperando: ${filaAtendimento.length}`);
     }
 }
