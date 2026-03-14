@@ -1,100 +1,101 @@
-const input = require('readline-sync');
+const input = require('readline-sync')
 
 let filaAtendimento = [];
 
-const user = ""
-const password = ""
-const name = ""
-const role = "MÉDICO ESPECIALISTA"
-const defaultRole = "MÉDICO"
+const user = "user";
+const password = "12345"
 
-let questionRole = input.question("Em qual ambito você deseja abrir o dashboard? ")
-
-if (questionRole === defaultRole) {
-    let questionUser = input.question("\nDigite seu usuário: ");
-    if (questionUser === user) {
-        let questionPassword = input.question("\nDigite sua senha: ");
-        if (questionPassword === password) {
-            abrirDashboard();
-        } else {
-            console.log("\nSenha Incorreta.")
-        }
+let userQuestion = input.question("Digite seu usuário: ");
+if (userQuestion === user) {
+    let passowrdQuestion = input.question("Digite sua senha: ");
+    if (passowrdQuestion === password) {
+        openDashboard();
     } else {
-        console.log("\nUsuário incorreto e/ou usuário não cadastrado.")
+        console.log("Senha incorreta.")
     }
 } else {
-    console.log("\n Desculpe! Este acesso ainda é apenas para médicos.")
+    console.log("Usuário incorreto e/ou inexistente.")
 }
 
-function abrirDashboard() {
-    console.log("\n============SISTEMA DE ATENDIMENTO================")
+function esperar(segundos) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, segundos * 1000);
+    })
+}
 
-    let rodando = true;
+async function openDashboard() {
 
-    while (rodando) {
+    let loop = true;
 
-        console.log(`Bem vindo, ${name}! Você está logado como: ${role}.`)
+    console.log("\n Abrindo, aguarde...")
+    await esperar(5);
 
-        let option = input.question("\nDigite a opcao que voce deseja: \n1 - Adicionar na fila de atendimento \n2 - Remover da fila de atendimento \n3 - Chamar paciente \n4 - Sair \nDigite aqui: ")
+    while (loop) {
+        console.clear();
+        console.log("\n======GESTÃO DE FILA DE ATENDIMENTO======")
+        console.log(`\nBem vindo, ${user}!`)
+
+        let option = input.question("\nDigite a opcao desejada: \n1- Adicionar a Fila \n2- Remover da fila, \n3 - Chamar ao guichê \n4- Sair \nDigite aqui: ")
 
         switch (option) {
             case "1":
-                adicionarAFila();
+                adicionarFila();
                 break;
 
             case "2":
-                removerDaFila();
+                removerFila();
                 break;
 
             case "3":
-                chamarPaciente();
+                chamarPessoa();
                 break;
 
             case "4":
                 console.log("Saindo...")
-                rodando = false;
+                await esperar(3);
+                loop = false;
                 break;
 
             default:
-                console.log("Opcao Invalida!")
-                return;
-        }
-    }
-
-    function adicionarAFila() {
-
-        console.clear();
-
-        let questionPacient = input.question("Digite o nome do paciente: ")
-        if (filaAtendimento.length >= 5) {
-            console.log("Aguarde, há muitas pessoas esperando.");
-        } else {
-            console.log(`O paciente ${questionPacient} foi adicionado com sucesso!`)
-            filaAtendimento.push(questionPacient);
-        }
-    }
-
-    function removerDaFila() {
-        console.log(filaAtendimento);
-        let questionRemove = input.question("Digite o número do paciente que você deseja remover: ");
-
-        switch (questionRemove) {
-            case questionRemove:
-                filaAtendimento.splice(0, questionRemove);
-                console.log(`O paciente ${questionRemove} foi removido com sucesso!`)
+                console.log("Opcao inválida.")
                 break;
-
-            default:
-                console.log("O paciente não existe ou já foi retirado!");
-                break;
-
         }
     }
+}
 
-    function chamarPaciente() {
-        console.log("Paciente entrou em atendimento!")
-        filaAtendimento.splice(0, 1);
+async function adicionarFila() {
+    console.log("\nQuantidade de pessoas na fila: " + filaAtendimento.length)
 
-        console.log(`Pacientes esperando: ${filaAtendimento.length}`);
+    let questionAdd = input.question("Quem você deseja adicionar? ")
+    console.log("Adicionando...")
+    if (filaAtendimento.length >= 5) {
+        console.log("\n Há muitas pessoas na fila, aguarde.")
+    } else {
+        filaAtendimento.push(questionAdd);
+        await esperar(4);
+        console.log(`${questionAdd} foi adicionado com sucesso!`)
+
     }
+}
+
+async function removerFila() {
+    console.log("\nPessoas na fila: " + filaAtendimento)
+
+    let questionRemove = input.question("Quem você deseja remover? ");
+    filaAtendimento.splice(questionRemove);
+
+    await esperar(2)
+
+    console.log(`${questionRemove} foi removido com sucesso.`)
+}
+
+async function chamarPessoa() {
+    console.log("\nPessoas na fila: " + filaAtendimento)
+    let questionCall = input.question("\nQuem você deseja chamar?")
+
+    console.log("Chamando...")
+    await esperar(3);
+    filaAtendimento.splice(questionCall);
+
+    console.log(`\n ${questionCall} foi chamado com sucesso!`)
 }
